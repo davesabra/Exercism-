@@ -1,21 +1,29 @@
-pub fn reply(message: &str) -> &str {
-    // clear front and end whitespaces
-    let message = message.trim();
+use std::fmt;
+use modulo::Mod;
+use num::Integer;
+const MINUTES_PER_HOUR: i32 = 60;
+const MINUTES_PER_DAY: i32 = 24*60;
 
-    // patternise message
-    let is_question: bool = message.ends_with("?");
-    let is_shouted: bool =
-        message.chars().any(char::is_uppercase) 
-           && !message.chars().any(char::is_lowercase); // no lower case
+#[derive(PartialEq, Debug)]
+pub struct Clock { minutes: i32,}
 
-    // match message pattern to Bob's replies
-    match message.is_empty() {
-        true => "Fine. Be that way!",
-        false => match (is_question, is_shouted) {
-            (true, true) => "Calm down, I know what I'm doing!",
-            (false, true) => "Whoa, chill out!",
-            (true, false) => "Sure.",
-            (false, false) => "Whatever.",
-                  }
+impl fmt::Display for Clock {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        //write!(f, "{:02}:{:02}", self.minutes/MINUTES_PER_HOUR, self.minutes % MINUTES_PER_HOUR)
+        let (hours, minutes) = self.minutes.div_rem(&MINUTES_PER_HOUR);
+        write!(f, "{:02}:{:02}", hours, minutes)
+    }
+}
+
+impl Clock {
+    pub fn new(hours: i32, minutes: i32) -> Self {
+
+        Clock {
+            minutes: (minutes + hours*MINUTES_PER_HOUR).modulo(MINUTES_PER_DAY)
+        }
+    }
+
+    pub fn add_minutes(self, minutes: i32) -> Self {
+        return Clock::new(0, self.minutes + minutes);
     }
 }

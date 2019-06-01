@@ -1,12 +1,10 @@
-use bob::reply;
+use clock::Clock;
 
 fn main() {
-    // failed tests
-    println!("{:?}", reply("WHAT THE HELL WERE YOU THINKING?"));
-
-    //println!("{:?}", reply("1,2,3"));
-
-    //println!("{:?}", reply(":)?"));
-
-    //println!("{:?}", reply("4?"));
+    println!("Hello World!");
+    let clock = Clock::new(0, 0).add_minutes(10);
+    assert_eq!(clock.to_string(), "00:10");
+    println!("{}", clock);
 }
+
+//runtime error, output not matching expectation
