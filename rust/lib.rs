@@ -1,54 +1,33 @@
-#[derive(PartialEq, Eq)]
-pub enum Spacer {
-    Add,
-}
+use std::collections::HashSet;
+use itertools::Itertools;
+use unicode_segmentation::UnicodeSegmentation;
 
-fn transpose<'a>(plain: &'a str) -> impl Iterator<Item = char> + 'a {
-    plain.chars()
-         .filter(|c| !c.is_whitespace())
-         .filter(char::is_ascii_alphanumeric)
-         .map(|c| c.to_ascii_lowercase())
-         .map(|c| { if c.is_ascii_alphabetic() {
-                        ((b'a' + b'z') - (c as u8)) as char
-                  } else {
-                    c
-                  }
-          })                          
-}
-/*
-fn chunk_ref_str(s: &str, n: usize) -> String {   
-    let mut chars = s.chars();
-    let whole_string = (0..)
-        .map(|_| chars.by_ref().take(n).collect::<String>())
-        .take_while(|s| !s.is_empty())
-        .collect::<Vec<_>>();   
+
+       
+ pub fn anagrams_for<'a>(word: &str, possibles: &[&'a str]) -> HashSet<&'a str> {  
+	
+	 let sort = |stringy: &str| {            
+	    let stringy = stringy                        
+                      .graphemes(true)
+                      .collect::<String>()
+                      .to_lowercase();  
+                     
+         stringy.chars()
+                   .sorted()
+                   .collect::<String>()
+	 };                                                                   
     
-    let chunked = whole_string.iter()
-          .fold(String::new(), |acc, block| acc + " " + &block);  
-          // unfortunately this fold retains a leading whitespace
-    {&*chunked.trim_start()}.to_string()
-}
-*/
-
-fn chunk(s: &str, space_handler: Spacer) -> String {
+     let lower_word = word.to_lowercase();  // pre-computing these avoids performance penalty 
+     let sorted_word = &sort(word);             // of re-calculating them every iteration
     
-    let mut out = String::new();
-    for (i,c) in s.chars().enumerate(){
-        if space_handler == Spacer::Add &&
-                                    i > 0 &&
-                                    i % 5 == 0 {
-                                        out.push(' ');
-                                    }
-        out.push(c);
-         }
-    out    
-}
-pub fn encode(plain: &str) -> String {
-    let encoded = transpose(&plain).collect::<String>();  // collect FromIterator to String
-    //chunk_ref_str(&encoded[..], 5)   // chunking the whole string ( slice)into blocks of 5
-    chunk(&*encoded, Spacer::Add)
-}
+    possibles                                          
+        .iter()
+        .copied()      
+        .filter(|candidate| lower_word != candidate.to_lowercase()  )    
+        .filter(|candidate| *sorted_word == sort(candidate))   
+        .collect()	
+ }
+              
 
-pub fn decode(cipher: &str) -> String {
-    transpose(&cipher).collect::<String>()
-}
+ 
+    
