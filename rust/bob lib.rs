@@ -1,4 +1,4 @@
-/*
+
 pub fn reply(message: &str) -> &str {
     // clear front and end whitespaces
     let message = message.trim();
@@ -21,7 +21,7 @@ pub fn reply(message: &str) -> &str {
     }
 }
 
-*/
+
 
 
 
